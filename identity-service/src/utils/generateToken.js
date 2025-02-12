@@ -10,8 +10,14 @@ const generateToken = async (user) => {
 
     const refreshToken = crypto.randomBytes(40).toString("hex");
 
+    console.log("refreshToken", refreshToken);
+
     const expiresAt = new Date();
+
     expiresAt.setDate(expiresAt.getDate() + 7);
+
+    console.log("expiresAt", expiresAt);
+
     await RefreshToken.create({
         token: refreshToken,
         user: user._id,
