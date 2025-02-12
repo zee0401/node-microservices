@@ -5,7 +5,9 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "lint": "eslint . --ext .js,.ts",
-        "format": "prettier --write ."
+        "format": "prettier --write .",
+        "start": "node index.js",
+        "dev": "nodemon index.js"
     },
     "eslintConfig": {
         "extends": "../../.eslintrc.json"
