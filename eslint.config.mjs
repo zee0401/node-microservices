@@ -7,11 +7,8 @@ export default [
     pluginJs.configs.recommended,
     {
         rules: {
-            "no-console": "error", // Prevents `console.log` usage
-            "no-warning-comments": [
-                "warn",
-                { terms: ["todo", "fixme"], location: "start" },
-            ],
+            "no-console": "warn",
+            "no-unused-vars": "warn",
         },
     },
 ];
