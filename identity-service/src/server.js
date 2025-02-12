@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import helmet from "helmet";
 import Redis from "ioredis";
 import { RateLimiterRedis } from "rate-limiter-flexible";
+import rateLimit from "express-rate-limit";
+import { RedisStore } from "rate-limit-redis";
 
 import connectDb from "./db/connectDb";
 import userRoutes from "./routes/userRoutes";
@@ -50,7 +52,30 @@ app.use((req, res, next) => {
         });
 });
 
-app.use("/user", userRoutes);
+const sensitiveEnpointsLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 10,
+    standardHeaders: true,
+    legacyHeaders: false,
+    handler: (req, res) => {
+        logger.error(
+            "Sensitive endpoints rate limit exceeded for IP address",
+            req.ip
+        );
+        res.status(429).json({
+            success: false,
+            message:
+                "Sensitive endpoints rate limit exceeded Too many requests",
+        });
+    },
+    store: new RedisStore({
+        sendCommand: (...args) => redisClient.call(...args),
+    }),
+});
+
+app.use("/api/auth/register", sensitiveEnpointsLimiter);
+
+app.use("/api/auth", userRoutes);
 
 app.listen(process.env.PORT, () => {
     console.log(`Server is running on port ${process.env.PORT}`);
