@@ -10,7 +10,7 @@ const logger = winston.createLogger({
     ),
     defaultMeta: { service: "identity-service" },
     transports: [
-        new winston.transports.console({
+        new winston.transports.Console({
             format: winston.format.combine(
                 winston.format.colorize(),
                 winston.format.simple()

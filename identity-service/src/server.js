@@ -7,13 +7,15 @@ import { RateLimiterRedis } from "rate-limiter-flexible";
 import rateLimit from "express-rate-limit";
 import { RedisStore } from "rate-limit-redis";
 
-import connectDb from "./db/connectDb";
-import userRoutes from "./routes/userRoutes";
-import logger from "./utils/logger";
+import connectDb from "./db/connectDb.js";
+import userRoutes from "./routes/userRoutes.js";
+import errorHandler from "./middlewares/errorHandler.js";
+import logger from "./utils/logger.js";
 
 dotenv.config();
 
 const app = express();
+const PORT = process.env.PORT || 3001;
 
 // connect to db
 connectDb();
@@ -77,6 +79,14 @@ app.use("/api/auth/register", sensitiveEnpointsLimiter);
 
 app.use("/api/auth", userRoutes);
 
-app.listen(process.env.PORT, () => {
-    console.log(`Server is running on port ${process.env.PORT}`);
+app.use(errorHandler);
+
+app.listen(PORT, () => {
+    logger.info(`Server is running on port ${PORT}`);
 });
+
+process.on("unhandledRejection", (reason, promise) => {
+    logger.error("unhandledRejection", promise, "reason", reason);
+});
+
+console.log("Server is running on port 3001");

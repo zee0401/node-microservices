@@ -1,0 +1,2 @@
+{"level":"info","message":"Server is running on port 3001","service":"identity-service","timestamp":"2025-02-12T22:05:26.633Z"}
+{"level":"info","message":"Connected to MongoDB","service":"identity-service","timestamp":"2025-02-12T22:05:27.077Z"}
