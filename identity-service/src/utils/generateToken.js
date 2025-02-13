@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import RefreshToken from "../models/refreshTokenModel.js";
+import crypto from "crypto";
 
 const generateToken = async (user) => {
     const accessToken = jwt.sign(
@@ -10,13 +11,9 @@ const generateToken = async (user) => {
 
     const refreshToken = crypto.randomBytes(40).toString("hex");
 
-    console.log("refreshToken", refreshToken);
-
     const expiresAt = new Date();
 
     expiresAt.setDate(expiresAt.getDate() + 7);
-
-    console.log("expiresAt", expiresAt);
 
     await RefreshToken.create({
         token: refreshToken,

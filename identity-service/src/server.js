@@ -82,11 +82,9 @@ app.use("/api/auth", userRoutes);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-    logger.info(`Server is running on port ${PORT}`);
+    logger.info(`Identity Server is running on port ${PORT}`);
 });
 
 process.on("unhandledRejection", (reason, promise) => {
     logger.error("unhandledRejection", promise, "reason", reason);
 });
-
-console.log("Server is running on port 3001");
