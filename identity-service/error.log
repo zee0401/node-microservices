@@ -1,0 +1,5 @@
+{"level":"error","message":"unhandledRejection","service":"identity-service","timestamp":"2025-02-13T06:20:06.814Z"}
+{"level":"error","message":"unhandledRejection","service":"identity-service","timestamp":"2025-02-13T06:20:06.816Z"}
+{"level":"error","message":"unhandledRejection","service":"identity-service","timestamp":"2025-02-13T06:23:23.946Z"}
+{"level":"error","message":"unhandledRejection","service":"identity-service","timestamp":"2025-02-13T06:23:23.949Z"}
+{"level":"error","message":"Registeration failed crypto.randomBytes is not a function","service":"identity-service","stack":"TypeError: crypto.randomBytes is not a function\n    at generateToken (file:///D:/Zeshan/React%20Node%20Projects/Node-microservices/social-media/identity-service/src/utils/generateToken.js:11:33)\n    at registerUser (file:///D:/Zeshan/React%20Node%20Projects/Node-microservices/social-media/identity-service/src/controllers/userController.js:42:53)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","timestamp":"2025-02-13T06:52:08.870Z"}
