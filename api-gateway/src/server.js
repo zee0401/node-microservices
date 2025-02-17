@@ -22,7 +22,7 @@ app.use(express.json());
 app.use(cors());
 app.use(helmet());
 
-const ratelimit = rateLimit({
+const ratelimitOptions = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 100,
     standardHeaders: true,
@@ -42,7 +42,7 @@ const ratelimit = rateLimit({
     }),
 });
 
-app.use(ratelimit);
+app.use(ratelimitOptions);
 
 app.use((req, res, next) => {
     logger.info(`Received ${req.method} request from ${req.ip} for ${req.url}`);
@@ -52,7 +52,7 @@ app.use((req, res, next) => {
 
 const proxyOptions = {
     proxyReqPathResolver: (req) => {
-        return req.originalUrl.replace(/^\/v1/, "api/");
+        return req.originalUrl.replace(/^\/v1/, "/api");
     },
     proxyErrorHandler: (err, res, next) => {
         logger.error("proxy error", err);
@@ -66,7 +66,7 @@ const proxyOptions = {
 
 app.use(
     "/v1",
-    proxy(process.env.API_GATEWAY_URL, {
+    proxy(process.env.IDENTITY_SERVICE_URL, {
         ...proxyOptions,
         proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
             proxyReqOpts.headers["Content-Type"] = "application/json";
