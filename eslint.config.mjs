@@ -4,11 +4,29 @@ import importPlugin from "eslint-plugin-import";
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
-    { languageOptions: { globals: globals.node } },
+    {
+        languageOptions: {
+            globals: {
+                ...globals.node,
+            },
+            parserOptions: {
+                ecmaVersion: "latest",
+                sourceType: "module",
+            },
+        },
+    },
     pluginJs.configs.recommended,
     {
         plugins: {
             import: importPlugin,
+        },
+        settings: {
+            "import/resolver": {
+                node: {
+                    extensions: [".js", ".json", ".mjs", ".cjs"],
+                    moduleDirectory: ["node_modules", "../"],
+                },
+            },
         },
         rules: {
             "no-console": "warn",
