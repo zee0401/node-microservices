@@ -8,6 +8,7 @@ import { RedisStore } from "rate-limit-redis";
 import proxy from "express-http-proxy";
 
 import logger from "../../identity-service/src/utils/logger.js";
+import errorHandler from "./middleware/errorHandler.js";
 
 dotenv.config();
 
@@ -79,3 +80,12 @@ app.use(
         },
     })
 );
+
+app.use(errorHandler);
+
+app.listen(PORT, () => {
+    logger.info(`Server started on port ${PORT}`);
+
+    logger.info(`Identity Service URL: ${process.env.IDENTITY_SERVICE_URL}`);
+    logger.info(`Redis URL: ${process.env.REDIS_URL}`);
+});
