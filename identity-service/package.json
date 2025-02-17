@@ -11,7 +11,7 @@
     "dev": "nodemon src/server.js"
   },
   "eslintConfig": {
-    "extends": "../../.eslintrc.json"
+    "extends": "../../eslint.config.mjs"
   },
   "keywords": [],
   "author": "",
