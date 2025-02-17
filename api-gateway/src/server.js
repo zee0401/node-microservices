@@ -5,6 +5,7 @@ import redis from "ioredis";
 import helmet from "helmet";
 import { rateLimit } from "express-rate-limit";
 import { RedisStore } from "rate-limit-redis";
+import proxy from "express-http-proxy";
 
 import logger from "../../identity-service/src/utils/logger.js";
 
@@ -47,3 +48,34 @@ app.use((req, res, next) => {
     logger.info(`request body: ${req.body}`);
     next();
 });
+
+const proxyOptions = {
+    proxyReqPathResolver: (req) => {
+        return req.originalUrl.replace(/^\/v1/, "api/");
+    },
+    proxyErrorHandler: (err, res, next) => {
+        logger.error("proxy error", err);
+        res.status(500).json({
+            success: false,
+            message: `Internal server error : `,
+            error: err.message,
+        });
+    },
+};
+
+app.use(
+    "/v1",
+    proxy(process.env.API_GATEWAY_URL, {
+        ...proxyOptions,
+        proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
+            proxyReqOpts.headers["Content-Type"] = "application/json";
+            return proxyReqOpts;
+        },
+        userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
+            logger.info(
+                `proxy received from identity service ${userRes.statusCode}`
+            );
+            return proxyResData;
+        },
+    })
+);
