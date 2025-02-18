@@ -170,3 +170,33 @@ export const refreshTokenUser = async (req, res) => {
         });
     }
 };
+
+export const logoutUser = async (req, res) => {
+    logger.info("Logout user Endpoint");
+
+    try {
+        const { accessToken } = req.body;
+
+        if (!accessToken) {
+            logger.error("Access token not found");
+            return res.status(400).json({
+                success: false,
+                message: "Access token is required",
+            });
+        }
+
+        await RefreshToken.deleteOne({ token: accessToken });
+        logger.info("Refresh token deleted successfully");
+
+        return res.status(200).json({
+            success: true,
+            message: "Logged out successfully",
+        });
+    } catch (err) {
+        logger.error("Error while Logging out user", err);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error",
+        });
+    }
+};
