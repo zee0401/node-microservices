@@ -149,29 +149,21 @@ export const refreshTokenUser = async (req, res) => {
             });
         }
 
-        const { accessToken, refreshToken: newRefreshToken } =
+        const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
             await generateToken(user);
 
-        await RefreshToken.findOneAndUpdate(
-            { token: refreshToken },
-            {
-                token: newRefreshToken,
-                expiresAt: new Date(Date.now() + 3600 * 1000),
-            }
-        );
+        await RefreshToken.deleteOne({ _id: storedToken._id });
 
         logger.info("token refreshed successfully");
 
         return res.status(200).json({
             success: true,
             message: "Token refreshed successfully",
-            data: {
-                accessToken,
-                refreshToken: newRefreshToken,
-            },
+            accessToken: newAccessToken,
+            refreshToken: newRefreshToken,
         });
     } catch (err) {
-        logger.error("Refresh token failed", err);
+        logger.error("Refresh token error occurred", err);
         return res.status(500).json({
             success: false,
             message: "Internal server error",
