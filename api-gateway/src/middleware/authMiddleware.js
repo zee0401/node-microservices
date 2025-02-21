@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import logger from "../utils/logger.js";
 
-const authMiddleware = async (req, res, next) => {
+export const validateToken = async (req, res, next) => {
     const authHeader = req.headers["authorization"];
 
     const token = authHeader && authHeader.split(" ")[1];
