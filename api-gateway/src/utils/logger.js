@@ -1,5 +1,13 @@
 import winston from "winston";
 
+const colors = {
+    error: "red",
+    warn: "yellow",
+    info: "green",
+    debug: "magenta",
+};
+winston.addColors(colors);
+
 const logger = winston.createLogger({
     level: process.env.NODE_ENV === "production" ? "info" : "debug",
     format: winston.format.combine(
@@ -12,7 +20,7 @@ const logger = winston.createLogger({
     transports: [
         new winston.transports.Console({
             format: winston.format.combine(
-                winston.format.colorize(),
+                winston.format.colorize({ all: true }),
                 winston.format.simple()
             ),
         }),
