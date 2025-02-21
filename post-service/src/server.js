@@ -32,7 +32,14 @@ app.use((req, res, next) => {
 
 //implement ip based rate limiting for sensitive routes
 
-app.use("/posts", postRoute);
+app.use(
+    "/api/posts",
+    (req, res, next) => {
+        req.redisClient = redisClient;
+        next();
+    },
+    postRoute
+);
 
 app.use(errorHandler);
 
