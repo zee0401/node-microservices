@@ -4,10 +4,12 @@ import crypto from "crypto";
 
 const generateToken = async (user) => {
     const accessToken = jwt.sign(
-        { user: user._id, username: user.username },
+        { userId: user._id, username: user.username },
         process.env.JWT_SECRET,
         { expiresIn: "60m" }
     );
+
+    console.log(user, "user in generate token");
 
     const refreshToken = crypto.randomBytes(40).toString("hex");
 

@@ -3,7 +3,6 @@ import dotenv from "dotenv";
 import helmet from "helmet";
 import cors from "cors";
 import Redis from "ioredis";
-import mongoose from "mongoose";
 
 import logger from "./utils/logger.js";
 import postRoute from "./routes/postRoute.js";
