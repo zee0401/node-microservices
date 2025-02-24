@@ -38,3 +38,51 @@ export const createPost = async (req, res) => {
         });
     }
 };
+
+export const getAllPosts = async (req, res) => {
+    logger.info("Getting all posts endpoint");
+
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const startIndex = (page - 1) * limit;
+
+        const cachedKey = `posts:${page}:${limit}`;
+        const cachedPosts = await req.redisClient.get(cachedKey);
+
+        if (cachedPosts) {
+            return res.status(200).json({
+                success: true,
+                message: "Posts Found",
+                posts: JSON.parse(cachedPosts),
+            });
+        }
+
+        const posts = await Post.find({})
+            .sort({ createdAt: -1 })
+            .limit(limit)
+            .skip(startIndex);
+
+        const totalPosts = await Post.countDocuments();
+
+        const result = {
+            posts,
+            totalPages: Math.ceil(total / limit),
+            totalPosts,
+            currentPage: page,
+        };
+
+        await req.redisClient.set(cachedKey, 300, JSON.stringify(result));
+
+        res.status(200).json({
+            success: true,
+            result,
+        });
+    } catch (err) {
+        logger.error("Error fetching all posts", err);
+        res.status(500).json({
+            success: false,
+            message: "Error fetching  posts",
+        });
+    }
+};
