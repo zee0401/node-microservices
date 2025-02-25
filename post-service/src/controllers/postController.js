@@ -67,12 +67,12 @@ export const getAllPosts = async (req, res) => {
 
         const result = {
             posts,
-            totalPages: Math.ceil(total / limit),
+            totalPages: Math.ceil(totalPosts / limit),
             totalPosts,
             currentPage: page,
         };
 
-        await req.redisClient.set(cachedKey, 300, JSON.stringify(result));
+        await req.redisClient.setex(cachedKey, 300, JSON.stringify(result));
 
         res.status(200).json({
             success: true,
@@ -83,6 +83,53 @@ export const getAllPosts = async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Error fetching  posts",
+        });
+    }
+};
+
+export const getPostById = async (req, res) => {
+    logger.info("Getting post by id endpoint");
+
+    try {
+        const post = req.params.id;
+
+        const cachedKey = `post:${post}`;
+
+        const cachedPost = await req.redisClient.get(cachedKey);
+
+        if (cachedPost) {
+            return res.status(200).json({
+                success: true,
+                message: "Post Found",
+                post: JSON.parse(cachedPost),
+            });
+        }
+
+        const singlePost = await Post.findById(post);
+
+        if (!singlePost) {
+            return res.status(404).json({
+                success: false,
+                message: "Post Not Found",
+            });
+        }
+
+        await req.redisClient.setex(
+            cachedKey,
+            3000,
+            JSON.stringify(singlePost)
+        );
+
+        res.status(200).json({
+            success: true,
+            message: "Post Found",
+            singlePost,
+        });
+    } catch (err) {
+        logger.error("Error fetching the post", err);
+        res.status(500).json({
+            success: false,
+            message: "Error fetching the  post",
         });
     }
 };
