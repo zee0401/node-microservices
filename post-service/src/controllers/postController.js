@@ -1,6 +1,8 @@
 import Post from "../models/postModel.js";
 import logger from "../utils/logger.js";
+
 import { validateCreatePost } from "../utils/validation.js";
+import { invalidateCache } from "../utils/invalidateCache.js";
 
 export const createPost = async (req, res) => {
     logger.info("Creating post endpoint");
@@ -24,6 +26,7 @@ export const createPost = async (req, res) => {
         });
 
         await post.save();
+        await invalidateCache(req, post._id.toString());
 
         logger.info("Post Created Successfully");
         res.status(201).json({
@@ -130,6 +133,39 @@ export const getPostById = async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Error fetching the  post",
+        });
+    }
+};
+
+export const deletePostById = async (req, res) => {
+    logger.info("Deleting post by id endpoint");
+
+    try {
+        const postId = req.params.id;
+        const post = await Post.findByIdAndDelete({
+            _id: postId,
+            user: req.user.userId,
+        });
+
+        if (!post) {
+            return res.status(404).json({
+                success: false,
+                message: "Post Not Found",
+            });
+        }
+
+        await invalidateCache(req, postId);
+
+        logger.info("Post Deleted Successfully");
+        res.status(200).json({
+            success: true,
+            message: "Post Deleted Successfully",
+        });
+    } catch (err) {
+        logger.error("Error deleting post", err);
+        res.status(500).json({
+            success: false,
+            message: "Error deleting post",
         });
     }
 };
