@@ -8,7 +8,7 @@ const logger = winston.createLogger({
         winston.format.errors({ stack: true }),
         winston.format.splat()
     ),
-    defaultMeta: { service: "post-service" },
+    defaultMeta: { service: "media-service" },
     transports: [
         new winston.transports.Console({
             format: winston.format.combine(
