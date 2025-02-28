@@ -101,6 +101,31 @@ app.use(
     })
 );
 
+app.use(
+    "/v1/media",
+    validateToken,
+    proxy(process.env.MEDIA_SERVICE_URL, {
+        ...proxyOptions,
+        proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
+            proxyReqOpts.headers["x-user-id"] = srcReq.user.userId;
+
+            if (
+                !srcReq.headers["content-type"].includes("multipart/form-data")
+            ) {
+                proxyReqOpts.headers["Content-Type"] = "application/json";
+            }
+            return proxyReqOpts;
+        },
+        userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
+            logger.info(
+                `proxy received from media service ${userRes.statusCode}`
+            );
+            return proxyResData;
+        },
+        parseReqBody: false,
+    })
+);
+
 app.use(errorHandler);
 
 app.listen(PORT, () => {

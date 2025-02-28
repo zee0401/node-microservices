@@ -1,8 +1,8 @@
 import express from "express";
-import { uploadMedia } from "../controllers/media-controller";
-import logger from "../utils/logger";
+import { uploadMedia } from "../controllers/media-controller.js";
+import logger from "../utils/logger.js";
 import multer from "multer";
-import authenticateRequest from "../middleware/authMiddleware";
+import authenticateRequest from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
