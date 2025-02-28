@@ -4,11 +4,13 @@ import dotenv from "dotenv";
 import { v2 as cloudinary } from "cloudinary";
 import helmet from "helmet";
 
-import logger from "./logger";
-import errorHandler from "./errorHandler";
-import { connectDb } from "./config/connectDb";
+import logger from "./utils/logger.js";
+import errorHandler from "./middleware/errorHandler.js";
+import { connectDb } from "./config/connectDb.js";
+import mediaRoutes from "./routes/media-route.js";
 
 dotenv.config();
+const PORT = process.env.PORT || 3004;
 
 connectDb();
 
@@ -22,4 +24,24 @@ app.use((req, res, next) => {
     logger.info(`Request Body ${req.body}`);
     next();
 });
-app.use("/media", mediaRoutes);
+
+app.use("/api/media", mediaRoutes);
+
+app.use(errorHandler);
+
+async function startServer() {
+    try {
+        app.listen(PORT, () => {
+            logger.info(`Post service running on port ${PORT}`);
+        });
+    } catch (error) {
+        logger.error("Failed to connect to server", error);
+        process.exit(1);
+    }
+}
+
+startServer();
+
+process.on("unhandledRejection", (reason, promise) => {
+    logger.error("Unhandled Rejection at", promise, "reason:", reason);
+});
