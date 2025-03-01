@@ -6,8 +6,6 @@ export const validateToken = async (req, res, next) => {
 
     const token = authHeader && authHeader.split(" ")[1];
 
-    console.log(token, "token");
-
     if (!token) {
         logger.warn("unauthorized access");
         return res.status(401).json({
@@ -24,7 +22,6 @@ export const validateToken = async (req, res, next) => {
                 message: "Invalid token",
             });
         }
-        console.log(user, "user");
         req.user = user;
         next();
     });

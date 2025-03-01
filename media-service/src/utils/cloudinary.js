@@ -1,5 +1,8 @@
 import { v2 as cloudinary } from "cloudinary";
 import logger from "./logger.js";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -9,7 +12,7 @@ cloudinary.config({
 
 export const uploadMediaToCloudinary = async (file) => {
     return new Promise((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_streaM(
+        const uploadStream = cloudinary.uploader.upload_stream(
             {
                 resource_type: "auto",
             },

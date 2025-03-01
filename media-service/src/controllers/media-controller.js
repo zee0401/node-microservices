@@ -6,6 +6,7 @@ export const uploadMedia = async (req, res) => {
     logger.info("Started uploading Media");
     try {
         const file = req.file;
+
         if (!file) {
             logger.error("No file uploaded");
             return res
@@ -13,10 +14,10 @@ export const uploadMedia = async (req, res) => {
                 .json({ message: "No file uploaded", success: false });
         }
 
-        const { originalName, mimeType, buffer } = req.file;
+        const { originalname, mimetype, buffer } = req.file;
         const userId = req.user.userId;
 
-        logger.info(`file details ${originalName} ${mimeType} `);
+        logger.info(`file details ${originalname} ${mimetype} `);
         logger.info("Uploading media to cloudinary started");
 
         const cloudinaryMediaUpload = await uploadMediaToCloudinary(req.file);
@@ -28,9 +29,9 @@ export const uploadMedia = async (req, res) => {
 
         const newlyCreatedMedia = new Media({
             publicId: cloudinaryMediaUpload.public_id,
-            originalName,
+            originalName: originalname,
             url: cloudinaryMediaUpload.secure_url,
-            mimeType,
+            mimeType: mimetype,
             userId: userId,
         });
 
