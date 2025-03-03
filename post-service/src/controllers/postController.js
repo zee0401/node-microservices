@@ -3,6 +3,7 @@ import logger from "../utils/logger.js";
 
 import { validateCreatePost } from "../utils/validation.js";
 import { invalidateCache } from "../utils/invalidateCache.js";
+import { publishEventToRabbitMQ } from "../utils/rabbitmq.js";
 
 export const createPost = async (req, res) => {
     logger.info("Creating post endpoint");
@@ -153,6 +154,12 @@ export const deletePostById = async (req, res) => {
                 message: "Post Not Found",
             });
         }
+
+        await publishEventToRabbitMQ("post-deleted", {
+            postId: post._id.toString(),
+            user: req.user.userId,
+            mediaIds: post.mediaIds,
+        });
 
         await invalidateCache(req, postId);
 
