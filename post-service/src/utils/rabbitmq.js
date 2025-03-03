@@ -10,7 +10,7 @@ const connectToRabbitMQ = async () => {
         await channel.assertExchange(EXCHANGE_NAME, "topic", {
             durable: false,
         });
-
+        logger.info("Connected to rabbitmq");
         return channel;
     } catch (error) {
         logger.error("Error in connecting to rabbitmq", error);

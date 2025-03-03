@@ -8,6 +8,7 @@ import logger from "./utils/logger.js";
 import postRoute from "./routes/postRoute.js";
 import errorHandler from "./middleware/errorHandler.js";
 import connectDb from "./connectDb/connectDb.js";
+import connectToRabbitMQ from "./utils/rabbitmq.js";
 
 dotenv.config();
 
@@ -44,6 +45,7 @@ app.use(errorHandler);
 
 async function startServer() {
     try {
+        await connectToRabbitMQ();
         app.listen(PORT, () => {
             logger.info(`Post service running on port ${PORT}`);
         });
