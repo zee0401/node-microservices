@@ -46,4 +46,5 @@ export const consumeEventFromRabbitMQ = async (routingKey, callback) => {
             channel.ack(msg);
         }
     });
+    logger.info("subscribed to event :", routingKey);
 };

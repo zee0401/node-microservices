@@ -7,6 +7,11 @@ import logger from "./utils/logger.js";
 import errorHandler from "./middleware/errorHandler.js";
 import { connectDb } from "./config/connectDb.js";
 import mediaRoutes from "./routes/media-route.js";
+import {
+    connectToRabbitMQ,
+    consumeEventFromRabbitMQ,
+} from "./utils/rabbitmq.js";
+import { handlePostDeleted } from "./eventHandlers/media-event-handler.js";
 
 dotenv.config();
 const PORT = process.env.PORT || 3004;
@@ -31,6 +36,10 @@ app.use(errorHandler);
 
 async function startServer() {
     try {
+        await connectToRabbitMQ();
+
+        await consumeEventFromRabbitMQ("post-deleted", handlePostDeleted);
+
         app.listen(PORT, () => {
             logger.info(`Post service running on port ${PORT}`);
         });
