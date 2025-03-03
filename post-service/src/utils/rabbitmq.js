@@ -3,10 +3,12 @@ import logger from "./logger";
 
 const EXCHANGE_NAME = "social-media-exchange";
 
-const connectToRabbitMQ = async () => {
+let channel = null;
+
+export const connectToRabbitMQ = async () => {
     try {
         const connection = await amqp.connect(process.env.RABBITMQ_URL);
-        const channel = await connection.createChannel();
+        channel = await connection.createChannel();
         await channel.assertExchange(EXCHANGE_NAME, "topic", {
             durable: false,
         });
@@ -16,4 +18,15 @@ const connectToRabbitMQ = async () => {
         logger.error("Error in connecting to rabbitmq", error);
     }
 };
-export default connectToRabbitMQ;
+
+export const publishEventToRabbitMQ = async (routingKey, message) => {
+    if (!channel) {
+        connectToRabbitMQ();
+    }
+    await channel.publish(
+        EXCHANGE_NAME,
+        routingKey,
+        Buffer.from(JSON.stringify(message))
+    );
+    logger.info("Published event :", routingKey);
+};
