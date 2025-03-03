@@ -29,3 +29,14 @@ export const uploadMediaToCloudinary = async (file) => {
         uploadStream.end(file.buffer);
     });
 };
+
+export const deleteUserFromCloudinary = async (userId) => {
+    try {
+        const result = await cloudinary.uploader.destroy(userId);
+        logger.info("Deleted user from cloudinary");
+        return result;
+    } catch (error) {
+        logger.error("Error deleting user from cloudinary", error);
+        throw error;
+    }
+};
