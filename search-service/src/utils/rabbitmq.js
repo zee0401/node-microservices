@@ -17,3 +17,20 @@ export const connectToRabbitMQ = async () => {
         logger.error("Error connecting to rabbit mq", error);
     }
 };
+
+export const consumeEvent = async (routingKey, callback) => {
+    if (!channel) {
+        await connectToRabbitMQ();
+    }
+
+    const queue = await channel.assertQueue("", { exclusive: true });
+    await channel.bindQueue(queue.queue, EXCHANGE, routingKey);
+    channel.consume(queue.queue, async (msg) => {
+        if (msg !== null) {
+            const content = JSON.parse(msg.content.toString());
+            callback(content);
+            channel.ack(msg);
+        }
+    });
+    logger.info(`Subscribed to event: ${routingKey}`);
+};
