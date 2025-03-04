@@ -91,7 +91,7 @@ app.use(
             );
             return proxyResData;
         },
-        parseReqBody: false, // ✅ Must be `false` to allow file uploads
+        parseReqBody: false,
     })
 );
 
