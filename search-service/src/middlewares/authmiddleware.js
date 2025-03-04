@@ -1,4 +1,4 @@
-import logger from "../urils/logger.js";
+import logger from "../utils/logger.js";
 
 const authmiddleware = (req, res, next) => {
     const userId = req.headers["x-user-id"];
